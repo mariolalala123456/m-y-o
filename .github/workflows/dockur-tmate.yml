@@ -5,28 +5,23 @@ on:
 
 jobs:
   run-vm:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest # CHUYỂN SANG LINUX ĐỂ CHẠY ĐƯỢC DOCKUR
     steps:
-    - name: 1. Tai va Chay Dockur Windows ngam (Da sua loi ao hoa)
+    - name: 1. Tai va Chay Dockur Windows ngam
       run: |
-        docker run -d -p 3389:3389/tcp -p 3389:3389/udp -e KVM="N" --name win-dockur dockurr/windows
-        echo "Dang khoi dong Dockur Windows..."
+        # Chạy Dockur trên Linux và mở cổng RDP 3389
+        docker run -d -p 3389:3389/tcp -p 3389:3389/udp --privileged -e KVM="N" --name win-dockur dockurr/windows
+        echo "Dang khoi dong Dockur Windows... Vui long cho trong giay lat."
 
-    - name: 2. Tao tai khoan Admin cho may ao GitHub
+    - name: 2. Tai va Khoi dong Ngrok RDP Tunnel
       run: |
-        net user administrator MatKhauMoi123 /active:yes
-        net localgroup administrators administrator /add
-        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
-        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-
-    - name: 3. Tai va Khoi dong Ngrok RDP Tunnel
-      run: |
-        # LINK TẢI TRỰC TIẾP ZIP CHUẨN KHÔNG BỊ LỖI
-        Invoke-WebRequest -Uri "https://equinox.io" -OutFile "ngrok.zip"
-        Expand-Archive -Path "ngrok.zip" -DestinationPath "."
+        # Cài đặt Ngrok phiên bản dành cho Linux Ubuntu
+        curl -s https://amazonaws.com | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+        echo "deb https://amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+        sudo apt-get update && sudo apt-get install ngrok -y
         
-        # Mã Token ngrok của bạn
-        .\ngrok.exe config add-authtoken 3LayGRTf8kCMeaebdTBnUqjSv7f_5WcXXpsBqX5B1pe6oEVqV
+        # Cấu hình mã Token ngrok của bạn
+        ngrok config add-authtoken 3LayGRTf8kCMeaebdTBnUqjSv7f_5WcXXpsBqX5B1pe6oEVqV
         
-        # Bật kết nối RDP ra internet
-        .\ngrok.exe tcp 3389
+        # Bật đường truyền cổng RDP ra internet
+        ngrok tcp 3389
