@@ -5,23 +5,20 @@ on:
 
 jobs:
   run-vm:
-    runs-on: ubuntu-latest # CHUYỂN SANG LINUX ĐỂ CHẠY ĐƯỢC DOCKUR
+    runs-on: ubuntu-latest # Chạy trên nền Linux Ubuntu ổn định
     steps:
     - name: 1. Tai va Chay Dockur Windows ngam
       run: |
-        # Chạy Dockur trên Linux và mở cổng RDP 3389
         docker run -d -p 3389:3389/tcp -p 3389:3389/udp --privileged -e KVM="N" --name win-dockur dockurr/windows
         echo "Dang khoi dong Dockur Windows... Vui long cho trong giay lat."
 
     - name: 2. Tai va Khoi dong Ngrok RDP Tunnel
       run: |
-        # Cài đặt Ngrok phiên bản dành cho Linux Ubuntu
-        curl -s https://amazonaws.com | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
-        echo "deb https://amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
-        sudo apt-get update && sudo apt-get install ngrok -y
+        # Tải file thực thi trực tiếp từ trang chủ Ngrok dành cho Linux
+        curl -fsSL https://bin.ngrok.com/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz | tar -xz
         
-        # Cấu hình mã Token ngrok của bạn
-        ngrok config add-authtoken 3LayGRTf8kCMeaebdTBnUqjSv7f_5WcXXpsBqX5B1pe6oEVqV
+        # Cấu hình mã Token ngrok của bạn (sử dụng dấu ./ để chạy file nội bộ)
+        ./ngrok config add-authtoken 3LayGRTf8kCMeaebdTBnUqjSv7f_5WcXXpsBqX5B1pe6oEVqV
         
         # Bật đường truyền cổng RDP ra internet
-        ngrok tcp 3389
+        ./ngrok tcp 3389
