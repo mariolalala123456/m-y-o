@@ -12,9 +12,10 @@ jobs:
         docker run -d -p 8006:8006 -p 3389:3389/tcp -p 3389:3389/udp --name win-dockur dockurr/windows
         echo "Dang khoi dong Dockur Windows... Vui long cho trong giay lat."
 
-    - name: 2. Tu dong Cai dat va Cau hinh RustDesk
+    - name: 2. Tu dong Cai dat va Cau hinyh RustDesk
       run: |
         New-Item -ItemType Directory -Force -Path "C:\rustdesk"
+        # Đường link tải trực tiếp file RustDesk chuẩn:
         Invoke-WebRequest -Uri "https://github.com" -OutFile "C:\rustdesk\rustdesk.zip"
         Expand-Archive -Path "C:\rustdesk\rustdesk.zip" -DestinationPath "C:\rustdesk\"
         Start-Process -FilePath "C:\rustdesk\rustdesk.exe" -ArgumentList "--password MatKhauDockur123" -WindowStyle Hidden
