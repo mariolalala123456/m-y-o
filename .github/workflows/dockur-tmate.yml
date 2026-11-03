@@ -1,0 +1,24 @@
+name: Dockur Windows qua RustDesk
+
+on: 
+  workflow_dispatch # Bấm nút chạy thủ công
+
+jobs:
+  run-vm:
+    runs-on: windows-latest # Dùng máy ảo Windows của GitHub
+    steps:
+    - name: 1. Tai va Chay Dockur Windows ngam
+      run: |
+        docker run -d -p 8006:8006 -p 3389:3389/tcp -p 3389:3389/udp --name win-dockur dockurr/windows
+        echo "Dang khoi dong Dockur Windows... Vui long cho trong giay lat."
+
+    - name: 2. Tu dong Cai dat va Cau hinh RustDesk
+      run: |
+        New-Item -ItemType Directory -Force -Path "C:\rustdesk"
+        Invoke-WebRequest -Uri "https://github.com" -OutFile "C:\rustdesk\rustdesk.zip"
+        Expand-Archive -Path "C:\rustdesk\rustdesk.zip" -DestinationPath "C:\rustdesk\"
+        Start-Process -FilePath "C:\rustdesk\rustdesk.exe" -ArgumentList "--password MatKhauDockur123" -WindowStyle Hidden
+        Start-Sleep -Seconds 5
+
+    - name: 3. Lay ID ket noi va giu may ao hoat dong bằng Tmate
+      uses: mxschmitt/action-tmate@v3
