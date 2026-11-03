@@ -21,11 +21,11 @@ jobs:
 
     - name: 3. Tai va Khoi dong Ngrok RDP Tunnel
       run: |
-        # Tải ngrok bản chính thức không lo lỗi giải nén
-        curl -L -o ngrok.zip https://equinox.io
+        # SỬ DỤNG LINK TẢI TRỰC TIẾP CHÍNH THỨC CỦA NGROK WINDOWS
+        Invoke-WebRequest -Uri "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip" -OutFile "ngrok.zip"
         Expand-Archive -Path "ngrok.zip" -DestinationPath "."
         
-        # Đã cấu hình sẵn Token ngrok của bạn ở đây:
+        # Cấu hình Token ngrok của bạn
         .\ngrok.exe config add-authtoken 3LayGRTf8kCMeaebdTBnUqjSv7f_5WcXXpsBqX5B1pe6oEVqV
         
         # Bật đường truyền kết nối cổng RDP ra ngoài internet
