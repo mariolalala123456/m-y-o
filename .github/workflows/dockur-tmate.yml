@@ -1,16 +1,11 @@
-name: Dockur Windows qua Tmate RDP
+name: Kich Hoat May Ao Sieu Nhanh
 
 on: 
-  workflow_dispatch # Bấm nút chạy thủ công
+  workflow_dispatch
 
 jobs:
   run-vm:
-    runs-on: ubuntu-latest # Chạy trên nền Linux Ubuntu ổn định
+    runs-on: ubuntu-latest
     steps:
-    - name: 1. Tai va Chay Dockur Windows ngam
-      run: |
-        docker run -d -p 3389:3389/tcp -p 3389:3389/udp --privileged -e KVM="N" --name win-dockur dockurr/windows
-        echo "Dang khoi dong Dockur Windows... Vui long cho trong giay lat."
-
-    - name: 2. Mo duong truyen RDP bang Tmate
+    - name: 1. Mo duong truyen va hien link ngay lap tuc
       uses: mxschmitt/action-tmate@v3
