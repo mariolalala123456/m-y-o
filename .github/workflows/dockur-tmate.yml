@@ -1,25 +1,32 @@
-name: Dockur Windows qua RustDesk
+name: Dockur Windows qua Ngrok RDP
 
 on: 
   workflow_dispatch # Bấm nút chạy thủ công
 
 jobs:
   run-vm:
-    runs-on: windows-latest # Dùng máy ảo Windows của GitHub
+    runs-on: windows-latest
     steps:
     - name: 1. Tai va Chay Dockur Windows ngam
       run: |
-        docker run -d -p 8006:8006 -p 3389:3389/tcp -p 3389:3389/udp --name win-dockur dockurr/windows
+        docker run -d -p 3389:3389/tcp -p 3389:3389/udp --name win-dockur dockurr/windows
         echo "Dang khoi dong Dockur Windows... Vui long cho trong giay lat."
 
-    - name: 2. Tu dong Cai dat va Cau hinyh RustDesk
+    - name: 2. Tao tai khoan Admin cho may ao GitHub
       run: |
-        New-Item -ItemType Directory -Force -Path "C:\rustdesk"
-        # Đường link tải trực tiếp file RustDesk chuẩn:
-        Invoke-WebRequest -Uri "https://github.com" -OutFile "C:\rustdesk\rustdesk.zip"
-        Expand-Archive -Path "C:\rustdesk\rustdesk.zip" -DestinationPath "C:\rustdesk\"
-        Start-Process -FilePath "C:\rustdesk\rustdesk.exe" -ArgumentList "--password MatKhauDockur123" -WindowStyle Hidden
-        Start-Sleep -Seconds 5
+        net user administrator MatKhauMoi123 /active:yes
+        net localgroup administrators administrator /add
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
-    - name: 3. Lay ID ket noi va giu may ao hoat dong bằng Tmate
-      uses: mxschmitt/action-tmate@v3
+    - name: 3. Tai va Khoi dong Ngrok RDP Tunnel
+      run: |
+        # Tải ngrok bản chính thức không lo lỗi giải nén
+        curl -L -o ngrok.zip https://equinox.io
+        Expand-Archive -Path "ngrok.zip" -DestinationPath "."
+        
+        # Đã cấu hình sẵn Token ngrok của bạn ở đây:
+        .\ngrok.exe config add-authtoken 3LayGRTf8kCMeaebdTBnUqjSv7f_5WcXXpsBqX5B1pe6oEVqV
+        
+        # Bật đường truyền kết nối cổng RDP ra ngoài internet
+        .\ngrok.exe tcp 3389
