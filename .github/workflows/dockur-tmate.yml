@@ -9,9 +9,8 @@ jobs:
     steps:
     - name: 1. Tai va Chay Dockur Windows ngam (Da sua loi ao hoa)
       run: |
-        # Đã thêm tham số -e KVM=N để chạy không cần phần cứng KVM ảo hóa nâng cao
         docker run -d -p 3389:3389/tcp -p 3389:3389/udp -e KVM="N" --name win-dockur dockurr/windows
-        echo "Dang khoi dong Dockur Windows... Vui long cho trong giay lat."
+        echo "Dang khoi dong Dockur Windows..."
 
     - name: 2. Tao tai khoan Admin cho may ao GitHub
       run: |
@@ -22,12 +21,12 @@ jobs:
 
     - name: 3. Tai va Khoi dong Ngrok RDP Tunnel
       run: |
-        # Tải ngrok bản chính thức qua link trực tiếp
+        # LINK TẢI TRỰC TIẾP ZIP CHUẨN KHÔNG BỊ LỖI
         Invoke-WebRequest -Uri "https://equinox.io" -OutFile "ngrok.zip"
         Expand-Archive -Path "ngrok.zip" -DestinationPath "."
         
         # Mã Token ngrok của bạn
         .\ngrok.exe config add-authtoken 3LayGRTf8kCMeaebdTBnUqjSv7f_5WcXXpsBqX5B1pe6oEVqV
         
-        # Bật đường truyền kết nối cổng RDP ra ngoài internet
+        # Bật kết nối RDP ra internet
         .\ngrok.exe tcp 3389
